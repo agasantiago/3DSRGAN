@@ -8,7 +8,7 @@ from Vgg3D import Vgg3D
 class VggLoss(nn.Module):
     def __init__(self, in_channels):
         super().__init__()
-        self._vgg_loss = Vgg3D(in_channels=in_channels).eval()
+        self._vgg_loss = Vgg3D(in_channels=in_channels).feature_extractor.eval()
         self._mse_loss = nn.MSELoss()
 
         for param in self._vgg_loss.parameters():

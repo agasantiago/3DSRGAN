@@ -48,13 +48,30 @@ def _create_conv_layers(in_channels, features):
 class Vgg3D(nn.Module):
     def __init__(self, in_channels, features=[64, 64, 128, 128, 256, 256, 512, 512]):
         super().__init__()
-        self._conv_layers = nn.Sequential(*_create_conv_layers(in_channels, features))
-        self._adaptive = nn.AdaptiveAvgPool3d((6, 6, 6))
+        out_features = features[-1]
+        self._feature_extractor = nn.Sequential(
+            *_create_conv_layers(in_channels, features)
+        )
+        self._classifier = nn.Sequential(
+            nn.AdaptiveAvgPool3d((6, 6, 6)),
+            nn.Flatten(),
+            nn.Linear(out_features * 6 * 6 * 6, 1024, bias=True),
+            nn.LeakyReLU(0.2, inplace=True),
+            nn.Linear(1024, 1, bias=True),
+        )
 
     def forward(self, X):
-        X = self._conv_layers(X)
-        X = self._adaptive(X)
+        X = self._feature_extractor(X)
+        X = self._classifier(X)
         return X
+
+    @property
+    def classifier(self):
+        return self._classifier
+
+    @property
+    def feature_extractor(self):
+        return self._feature_extractor
 
 
 if __name__ == "__main__":
