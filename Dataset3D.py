@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 from glob import glob
 
-import torch
 from torch.utils.data import Dataset, DataLoader
 import torchio as tio
 

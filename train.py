@@ -16,12 +16,12 @@ def train_generator(
     loss_fn = nn.MSELoss()
     start_time = datetime.now().hour
     for e in loop:
-        for X, y in loader:
-            X = X.to(device).float()
-            y = y.to(device).float()
+        for low_res, high_res in loader:
+            high_res = high_res.to(device).float()
+            low_res = low_res.to(device).float()
 
-            y_hat = generator(X).float()
-            loss = loss_fn(y, y_hat)
+            high_res_fake = generator(low_res).float()
+            loss = loss_fn(high_res, high_res_fake)
 
             optimizer.zero_grad()
             loss.backward()
