@@ -59,7 +59,7 @@ class Dataset3D(Dataset):
         super().__init__()
         if not low_res:
             h, w, d = high_res
-            low_res = (h, w, d//2)
+            low_res = (h, w, d//4)
         self._low_res_transf = tio.transforms.Resize(target_shape=low_res)
         self._dataset = _create_dataset(video_folder, transform, high_res, rgb, ext)
 
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     high_res = (32, 32, 128)
     low_res = (32, 32, 64)
     dataset = Dataset3D(video_folder, high_res, low_res=low_res, rgb=False)
-    loader = DataLoader(dataset)
+    loader = DataLoader(dataset, batch_size=2)
     for X, y in loader:
         break
 
