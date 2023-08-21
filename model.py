@@ -10,7 +10,7 @@ class ConvBlock(nn.Module):
         discriminator=False,
         use_act=False,
         use_bn=False,
-        **kwargs
+        **kwargs,
     ):
         """
         ConvBlocks: Cria o bloco para operações de Convolução 3D;
@@ -78,21 +78,45 @@ class Generator(nn.Module):
         time_scale=2,
         kernel_size=3,
         padding=1,
-        stride=1
+        stride=1,
     ):
         super().__init__()
         self._initial = ConvBlock(
             in_channels, out_channels, use_bn=False, kernel_size=9, stride=1, padding=4
         )
         self._residual_block = nn.Sequential(
-            *_create_residual(out_channels, num_blocks, kernel_size=kernel_size, stride=stride, padding=padding)
+            *_create_residual(
+                out_channels,
+                num_blocks,
+                kernel_size=kernel_size,
+                stride=stride,
+                padding=padding,
+            )
         )
         self._conv_block = ConvBlock(
-            out_channels, out_channels, kernel_size=kernel_size, stride=stride, padding=padding
+            out_channels,
+            out_channels,
+            kernel_size=kernel_size,
+            stride=stride,
+            padding=padding,
         )
         self._upsample = nn.Sequential(
-            UpSample(out_channels, spatial_scale, time_scale, kernel_size=kernel_size, stride=stride, padding=padding),
-            UpSample(out_channels, spatial_scale, time_scale, kernel_size=kernel_size, stride=stride, padding=padding)
+            UpSample(
+                out_channels,
+                spatial_scale,
+                time_scale,
+                kernel_size=kernel_size,
+                stride=stride,
+                padding=padding,
+            ),
+            UpSample(
+                out_channels,
+                spatial_scale,
+                time_scale,
+                kernel_size=kernel_size,
+                stride=stride,
+                padding=padding,
+            ),
         )
         self._cnn = nn.Conv3d(
             out_channels, in_channels, kernel_size=9, stride=1, padding=4
@@ -149,9 +173,7 @@ class Discriminator(nn.Module):
 
 if __name__ == "__main__":
     sample = torch.zeros((4, 1, 8, 8, 8))
-    generator = Generator(
-        in_channels=1
-    )
+    generator = Generator(in_channels=1)
     X = generator(sample)
     print(f"Input shape: {sample.shape}")
     print(f"Output shape: {X.shape}")

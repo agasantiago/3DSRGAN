@@ -54,12 +54,21 @@ def _create_dataset(video_folder, transform, size, rgb, ext):
     queue = _create_queue(subject_dataset, size)
     return queue
 
+
 class Dataset3D(Dataset):
-    def __init__(self, video_folder, high_res, low_res=None, transform=None, rgb=False, ext='.mp4'):
+    def __init__(
+        self,
+        video_folder,
+        high_res,
+        low_res=None,
+        transform=None,
+        rgb=False,
+        ext=".mp4",
+    ):
         super().__init__()
         if not low_res:
             h, w, d = high_res
-            low_res = (h, w, d//4)
+            low_res = (h, w, d // 4)
         self._low_res_transf = tio.transforms.Resize(target_shape=low_res)
         self._dataset = _create_dataset(video_folder, transform, high_res, rgb, ext)
 
@@ -69,11 +78,11 @@ class Dataset3D(Dataset):
     def __getitem__(self, item):
         y = self._dataset[item]
         X = self._low_res_transf(y)
-        return X['t1']['data'], y['t1']['data']
+        return X["t1"]["data"], y["t1"]["data"]
 
 
 if __name__ == "__main__":
-    video_folder = '/home/agasantiago/Documents/Datasets/VideoDataset'
+    video_folder = "/home/agasantiago/Documents/Datasets/VideoDataset"
     high_res = (32, 32, 128)
     low_res = (32, 32, 64)
     dataset = Dataset3D(video_folder, high_res, low_res=low_res, rgb=False)
@@ -83,7 +92,3 @@ if __name__ == "__main__":
 
     print(X.shape)
     print(y.shape)
-
-
-
-
