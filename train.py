@@ -121,10 +121,7 @@ def train_fn(
 
     generator_pack = pack_vars(generator, gen_optimizer, generator_loss_record)
     discriminator_pack = pack_vars(
-        discriminator, discriminator_loss, discriminator_loss_record
+        discriminator, disc_optimizer, discriminator_loss_record
     )
-
-    save_model(generator, gen_optimizer, path_to_save)
-    save_model(discriminator, disc_optimizer, path_to_save)
 
     return generator_pack, discriminator_pack

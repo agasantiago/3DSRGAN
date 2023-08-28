@@ -39,5 +39,3 @@ def pack_vars(model, optimizer, loss_fn):
 def unpack_vars(setup):
     model, optimizer, loss_fn = setup.values()
     return model, optimizer, loss_fn
-
-

@@ -78,7 +78,19 @@ def test_train_fn():
 def test_evaluate_model():
     video_folder = "/home/agasantiago/Documents/Datasets/VideoDataset"
     high_res = (16, 16, 64)
-    generator, discriminator, gen_optimizer, disc_optimizer, loader, dataset, batch_size, shuffle, epochs, _ =\
-        setup_vars()
-    generator_pack, discriminator_pack = evaluate_model(generator, discriminator, video_folder, 1.0e-3, batch_size, epochs, high_res)
-    return 
+    (
+        generator,
+        discriminator,
+        gen_optimizer,
+        disc_optimizer,
+        loader,
+        dataset,
+        batch_size,
+        shuffle,
+        epochs,
+        _,
+    ) = setup_vars()
+    generator_pack, discriminator_pack = evaluate_model(
+        generator, discriminator, video_folder, 1.0e-3, batch_size, epochs, high_res
+    )
+    return
