@@ -82,7 +82,7 @@ def train_fn(
     loader,
     epochs,
     device,
-    to_print=10,
+    to_print=50,
     path_to_save=None,
 ):
     generator, gen_optimizer, generator_loss_fn = unpack_vars(generator_pack)

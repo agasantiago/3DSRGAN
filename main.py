@@ -18,6 +18,7 @@ def evaluate_model(
     high_res,
     in_channels=1,
     low_res=None,
+    to_print=50,
     path_to_save=None,
 ):
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -27,7 +28,7 @@ def evaluate_model(
     generator = generator.to(device)
     gen_optimizer = Adam(generator.parameters(), lr=learning_rate)
     generator, gen_optimizer = train_generator(
-        generator, gen_optimizer, loader, epochs, device
+        generator, gen_optimizer, loader, epochs, device, to_print=to_print
     )
 
     discriminator = discriminator.to(device)
@@ -40,7 +41,7 @@ def evaluate_model(
     discriminator_pack = pack_vars(discriminator, disc_optimizer, discriminator_loss)
 
     generator_pack, discriminator_pack = train_fn(
-        generator_pack, discriminator_pack, loader, epochs, device
+        generator_pack, discriminator_pack, loader, epochs, device, to_print=to_print
     )
 
     generator, gen_optimizer, generator_loss = unpack_vars(generator_pack)
