@@ -84,10 +84,13 @@ if __name__ == "__main__":
     video_folder = "/home/agasantiago/Documents/Datasets/VideoDataset"
     high_res = (32, 32, 128)
     low_res = (32, 32, 64)
-    dataset = Dataset3D(video_folder, high_res, low_res=low_res, rgb=False)
-    loader = DataLoader(dataset, batch_size=2)
+    volume_transforms = tio.transforms.ZNormalization()
+    dataset = Dataset3D(
+        video_folder, high_res, transform=volume_transforms, low_res=low_res, rgb=False
+    )
+    loader = DataLoader(dataset, batch_size=1)
     for X, y in loader:
         break
 
-    print(X.shape)
+    print(X.max())
     print(y.shape)

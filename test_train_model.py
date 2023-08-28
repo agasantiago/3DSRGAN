@@ -2,6 +2,10 @@ import torch
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
+
+from torchio import transforms
+
+
 from model import Generator, Discriminator
 from train import train_generator, train_fn, pack_vars
 from loss import generator_loss_function, discriminator_loss_function
@@ -90,7 +94,15 @@ def test_evaluate_model():
         epochs,
         _,
     ) = setup_vars()
+    transform = transforms.ZNormalization()
     generator_pack, discriminator_pack = evaluate_model(
-        generator, discriminator, video_folder, 1.0e-3, batch_size, epochs, high_res
+        generator,
+        discriminator,
+        video_folder,
+        1.0e-3,
+        batch_size,
+        epochs,
+        high_res,
+        transform=transform,
     )
     return

@@ -16,13 +16,16 @@ def evaluate_model(
     batch_size,
     epochs,
     high_res,
+    transform=None,
     in_channels=1,
     low_res=None,
     to_print=50,
     path_to_save=None,
 ):
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    dataset = Dataset3D(video_folder, high_res, low_res, rgb=(in_channels == 3))
+    dataset = Dataset3D(
+        video_folder, high_res, low_res, transform=transform, rgb=(in_channels == 3)
+    )
     loader = DataLoader(dataset, batch_size=batch_size)
 
     generator = generator.to(device)
@@ -50,3 +53,34 @@ def evaluate_model(
     save_model(discriminator, disc_optimizer, path_to_save)
 
     return generator_pack, discriminator_pack
+
+
+if __name__ == "__main__":
+    from torchio import transforms
+    from model import Generator, Discriminator
+
+    video_folder = "/home/agasantiago/Documents/Datasets/VideoDataset"
+    high_res = (16, 16, 64)
+
+    batch_size = 5
+    shuffle = True
+    lr = 1.0e-5
+    in_channels = 1
+
+    generator = Generator(in_channels=in_channels)
+    discriminator = Discriminator(in_channels=in_channels)
+
+    epochs = 2000
+    transform = transforms.ZNormalization()
+
+    generator_pack, discriminator_pack = evaluate_model(
+        generator,
+        discriminator,
+        video_folder,
+        lr,
+        batch_size,
+        epochs,
+        high_res,
+        transform=transform,
+        to_print=10,
+    )
