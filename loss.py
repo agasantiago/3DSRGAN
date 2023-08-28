@@ -8,7 +8,8 @@ from VggLoss import VggLoss
 def generator_loss_function(
     in_channels, vgg_coef=6.0e-6, bce_coef=1.0e-3, mse_coef=1.0
 ):
-    vgg_loss_fn = VggLoss(in_channels=in_channels)
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    vgg_loss_fn = VggLoss(in_channels=in_channels).to(device)
     bce_loss_fn = nn.BCEWithLogitsLoss()
     mse_loss_fn = nn.MSELoss()
 
