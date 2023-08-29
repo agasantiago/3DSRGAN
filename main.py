@@ -17,6 +17,7 @@ def evaluate_model(
     batch_size,
     epochs,
     high_res,
+    epochs_gen=None,
     transform=None,
     in_channels=1,
     low_res=None,
@@ -31,12 +32,13 @@ def evaluate_model(
 
     generator = generator.to(device)
 
-    generator, gen_optimizer = train_generator(
-        generator, gen_optimizer, loader, epochs, device, to_print=to_print
-    )
+    if epochs_gen:
+        generator, gen_optimizer = train_generator(
+            generator, gen_optimizer, loader, epochs_gen, device, to_print=to_print
+        )
 
     discriminator = discriminator.to(device)
-    
+
     generator_loss = generator_loss_function(in_channels=in_channels)
     discriminator_loss = discriminator_loss_function()
 
@@ -44,7 +46,12 @@ def evaluate_model(
     discriminator_pack = pack_vars(discriminator, disc_optimizer, discriminator_loss)
 
     generator_pack, discriminator_pack = train_fn(
-        generator_pack, discriminator_pack, loader, epochs, device, to_print=to_print
+        generator_pack,
+        discriminator_pack,
+        loader,
+        epochs,
+        device=device,
+        to_print=to_print,
     )
 
     generator, gen_optimizer, generator_loss = unpack_vars(generator_pack)
