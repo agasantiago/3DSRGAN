@@ -11,8 +11,9 @@ from utils import save_model, pack_vars, unpack_vars
 def evaluate_model(
     generator,
     discriminator,
+    gen_optimizer,
+    disc_optimizer,
     video_folder,
-    learning_rate,
     batch_size,
     epochs,
     high_res,
@@ -29,14 +30,13 @@ def evaluate_model(
     loader = DataLoader(dataset, batch_size=batch_size)
 
     generator = generator.to(device)
-    gen_optimizer = Adam(generator.parameters(), lr=learning_rate)
+
     generator, gen_optimizer = train_generator(
         generator, gen_optimizer, loader, epochs, device, to_print=to_print
     )
 
     discriminator = discriminator.to(device)
-    disc_optimizer = Adam(discriminator.parameters(), lr=learning_rate)
-
+    
     generator_loss = generator_loss_function(in_channels=in_channels)
     discriminator_loss = discriminator_loss_function()
 
@@ -60,11 +60,11 @@ if __name__ == "__main__":
     from model import Generator, Discriminator
 
     video_folder = "/home/agasantiago/Documents/Datasets/VideoDataset"
-    high_res = (16, 16, 64)
+    high_res = (16, 16, 16)
 
     batch_size = 5
     shuffle = True
-    lr = 1.0e-5
+    lr = 1.0e-3
     in_channels = 1
 
     generator = Generator(in_channels=in_channels)

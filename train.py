@@ -33,6 +33,7 @@ def train_generator(
         now_time = datetime.now().hour
         if abs(now_time - start_time) >= 2.0:
             save_model(generator, optimizer, path_to_save)
+            start_time = now_time
 
     return generator, optimizer
 
