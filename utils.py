@@ -23,9 +23,10 @@ def save_model(model, optimizer, path=None):
     return
 
 
-def load_model(model, optimizer, path=None):
+def load_model(model, optimizer, path=None, device='cuda'):
     path = _get_path(model, "Loading", path)
-    info = torch.load(path)
+    info = torch.load(path, map_location=device)
+    model.to(device)
     model.load_state_dict(info["model_state_dict"])
     optimizer.load_state_dict(info["optimizer_state_dict"])
     return model, optimizer
