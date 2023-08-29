@@ -7,7 +7,7 @@ def _get_path(model, message, path):
     model_name = type(model).__name__
     if not path:
         path = os.getcwd()
-        path = os.path.join(path, f"{model_name}.pth")
+    path = os.path.join(path, f"{model_name}.pth")
     time = datetime.now()
     print(f"{message}: {model_name} at {time.strftime('%d/%m at %H:%M')}...")
     return path
