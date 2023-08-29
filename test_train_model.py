@@ -98,8 +98,9 @@ def test_evaluate_model():
     generator_pack, discriminator_pack = evaluate_model(
         generator,
         discriminator,
+        gen_optimizer,
+        disc_optimizer,
         video_folder,
-        1.0e-3,
         batch_size,
         epochs,
         high_res,

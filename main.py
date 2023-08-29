@@ -69,22 +69,26 @@ if __name__ == "__main__":
     video_folder = "/home/agasantiago/Documents/Datasets/VideoDataset"
     high_res = (16, 16, 16)
 
-    batch_size = 5
+    batch_size = 2
     shuffle = True
-    lr = 1.0e-3
+    lr = 1.0e-2
     in_channels = 1
 
     generator = Generator(in_channels=in_channels)
     discriminator = Discriminator(in_channels=in_channels)
 
-    epochs = 2000
+    gen_optimizer = Adam(generator.parameters(), lr=lr)
+    disc_optimizer = Adam(discriminator.parameters(), lr=lr)
+
+    epochs = 1
     transform = transforms.ZNormalization()
 
     generator_pack, discriminator_pack = evaluate_model(
         generator,
         discriminator,
+        gen_optimizer,
+        disc_optimizer,
         video_folder,
-        lr,
         batch_size,
         epochs,
         high_res,
