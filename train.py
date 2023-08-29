@@ -116,6 +116,7 @@ def train_fn(
         if abs(now - start) >= 2.0:
             save_model(generator, gen_optimizer, path_to_save)
             save_model(discriminator, disc_optimizer, path_to_save)
+            start = now
 
         generator_loss_record.append(generator_loss.item())
         discriminator_loss_record.append(discriminator_loss.item())
