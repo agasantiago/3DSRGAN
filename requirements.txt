@@ -1,4 +1,4 @@
-pytorch-cuda==11.7
+torch
 torchvision
 numpy
 matplotlib
