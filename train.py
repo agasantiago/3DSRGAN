@@ -86,11 +86,6 @@ def train_fn(
     to_print=50,
     path_to_save=None,
 ):
-    generator, gen_optimizer, generator_loss_fn = unpack_vars(generator_pack)
-    discriminator, disc_optimizer, discriminator_loss_fn = unpack_vars(
-        discriminator_pack
-    )
-
     generator_loss_record = []
     discriminator_loss_record = []
 
