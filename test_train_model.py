@@ -27,7 +27,7 @@ def setup_vars():
     gen_optimizer = Adam(generator.parameters(), lr=1.0e-3)
     disc_optimizer = Adam(discriminator.parameters(), lr=1.0e-3)
 
-    epochs = 1
+    epochs = 2
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     return (
@@ -95,7 +95,12 @@ def test_evaluate_model():
         _,
     ) = setup_vars()
     transform = transforms.ZNormalization()
-    generator_pack, discriminator_pack = evaluate_model(
+    (
+        generator_pack,
+        discriminator_pack,
+        generator_loss_record,
+        discriminator_loss_record,
+    ) = evaluate_model(
         generator,
         discriminator,
         gen_optimizer,

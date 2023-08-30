@@ -3,7 +3,7 @@ from datetime import datetime
 
 from torch import nn
 
-
+from loss import generator_loss_function, discriminator_loss_function
 from utils import save_model, pack_vars, unpack_vars
 
 
@@ -38,11 +38,16 @@ def train_generator(
     return generator, optimizer
 
 
-def train_one_epoch(generator_pack, discriminator_pack, loader, device):
-    generator, gen_optimizer, generator_loss_fn = unpack_vars(generator_pack)
-    discriminator, disc_optimizer, discriminator_loss_fn = unpack_vars(
-        discriminator_pack
-    )
+def train_one_epoch(
+    generator_pack,
+    discriminator_pack,
+    generator_loss_fn,
+    discriminator_loss_fn,
+    loader,
+    device,
+):
+    generator, gen_optimizer = unpack_vars(generator_pack)
+    discriminator, disc_optimizer = unpack_vars(discriminator_pack)
 
     generator.to(device)
     discriminator.to(device)
@@ -71,15 +76,21 @@ def train_one_epoch(generator_pack, discriminator_pack, loader, device):
         disc_optimizer.step()
         gen_optimizer.step()
 
-    generator_pack = pack_vars(generator, gen_optimizer, generator_loss)
-    discriminator_pack = pack_vars(discriminator, disc_optimizer, discriminator_loss)
+    generator_pack = pack_vars(generator, gen_optimizer)
+    discriminator_pack = pack_vars(discriminator, disc_optimizer)
 
-    return generator_pack, discriminator_pack
+    return (
+        generator_pack,
+        discriminator_pack,
+        generator_loss.item(),
+        discriminator_loss.item(),
+    )
 
 
 def train_fn(
     generator_pack,
     discriminator_pack,
+    in_channels,
     loader,
     epochs,
     device,
@@ -89,36 +100,44 @@ def train_fn(
     generator_loss_record = []
     discriminator_loss_record = []
 
+    generator_loss_fn = generator_loss_function(in_channels=in_channels)
+    discriminator_loss_fn = discriminator_loss_function()
+
     loop = tqdm(range(epochs))
     start = datetime.now().hour
     for e in loop:
-        generator_pack, discriminator_pack = train_one_epoch(
-            generator_pack, discriminator_pack, loader, device
-        )
-
-        generator, gen_optimizer, generator_loss = unpack_vars(generator_pack)
-        discriminator, disc_optimizer, discriminator_loss = unpack_vars(
-            discriminator_pack
+        (
+            generator_pack,
+            discriminator_pack,
+            generator_loss,
+            discriminator_loss,
+        ) = train_one_epoch(
+            generator_pack,
+            discriminator_pack,
+            generator_loss_fn,
+            discriminator_loss_fn,
+            loader,
+            device,
         )
 
         if to_print and (e + 1) % to_print == 0:
-            print(f"[Loss - Generator] Epoch: {e + 1}: {generator_loss.item():.4e}")
-            print(
-                f"[Loss - Discriminator] Epoch: {e + 1}: {discriminator_loss.item():.4e}"
-            )
+            print(f"[Loss - Generator] Epoch: {e + 1}: {generator_loss:.4e}")
+            print(f"[Loss - Discriminator] Epoch: {e + 1}: {discriminator_loss:.4e}")
 
         now = datetime.now().hour
         if abs(now - start) >= 2.0:
+            generator, gen_optimizer = unpack_vars(generator_pack)
+            discriminator, disc_optimizer = unpack_vars(discriminator_pack)
             save_model(generator, gen_optimizer, path_to_save)
             save_model(discriminator, disc_optimizer, path_to_save)
             start = now
 
-        generator_loss_record.append(generator_loss.item())
-        discriminator_loss_record.append(discriminator_loss.item())
+        generator_loss_record.append(generator_loss)
+        discriminator_loss_record.append(discriminator_loss)
 
-    generator_pack = pack_vars(generator, gen_optimizer, generator_loss_record)
-    discriminator_pack = pack_vars(
-        discriminator, disc_optimizer, discriminator_loss_record
+    return (
+        generator_pack,
+        discriminator_pack,
+        generator_loss_record,
+        discriminator_loss_record,
     )
-
-    return generator_pack, discriminator_pack

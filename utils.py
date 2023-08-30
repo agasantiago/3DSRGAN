@@ -32,11 +32,11 @@ def load_model(model, optimizer, path=None, device="cuda"):
     return model, optimizer
 
 
-def pack_vars(model, optimizer, loss_fn):
-    setup = {"model": model, "optimizer": optimizer, "loss": loss_fn}
+def pack_vars(model, optimizer):
+    setup = {"model": model, "optimizer": optimizer}
     return setup
 
 
 def unpack_vars(setup):
-    model, optimizer, loss_fn = setup.values()
-    return model, optimizer, loss_fn
+    model, optimizer = setup.values()
+    return model, optimizer

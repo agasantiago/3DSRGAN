@@ -3,7 +3,6 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 from train import train_generator, train_fn
-from loss import generator_loss_function, discriminator_loss_function
 from Dataset3D import Dataset3D
 from utils import save_model, pack_vars, unpack_vars
 
@@ -39,27 +38,35 @@ def evaluate_model(
 
     discriminator = discriminator.to(device)
 
-    generator_loss = generator_loss_function(in_channels=in_channels)
-    discriminator_loss = discriminator_loss_function()
+    generator_pack = pack_vars(generator, gen_optimizer)
+    discriminator_pack = pack_vars(discriminator, disc_optimizer)
 
-    generator_pack = pack_vars(generator, gen_optimizer, generator_loss)
-    discriminator_pack = pack_vars(discriminator, disc_optimizer, discriminator_loss)
-
-    generator_pack, discriminator_pack = train_fn(
+    (
         generator_pack,
         discriminator_pack,
+        generator_loss_record,
+        discriminator_loss_record,
+    ) = train_fn(
+        generator_pack,
+        discriminator_pack,
+        in_channels,
         loader,
         epochs,
         device=device,
         to_print=to_print,
     )
 
-    generator, gen_optimizer, generator_loss = unpack_vars(generator_pack)
-    discriminator, disc_optimizer, discriminator_loss = unpack_vars(discriminator_pack)
+    generator, gen_optimizer = unpack_vars(generator_pack)
+    discriminator, disc_optimizer = unpack_vars(discriminator_pack)
     save_model(generator, gen_optimizer, path_to_save)
     save_model(discriminator, disc_optimizer, path_to_save)
 
-    return generator_pack, discriminator_pack
+    return (
+        generator_pack,
+        discriminator_pack,
+        generator_loss_record,
+        discriminator_loss_record,
+    )
 
 
 if __name__ == "__main__":
@@ -67,7 +74,7 @@ if __name__ == "__main__":
     from model import Generator, Discriminator
 
     video_folder = "/home/agasantiago/Documents/Datasets/VideoDataset"
-    high_res = (16, 16, 16)
+    high_res = (16, 16, 64)
 
     batch_size = 2
     shuffle = True
@@ -83,7 +90,12 @@ if __name__ == "__main__":
     epochs = 1
     transform = transforms.ZNormalization()
 
-    generator_pack, discriminator_pack = evaluate_model(
+    (
+        generator_pack,
+        discriminator_pack,
+        generator_loss_record,
+        discriminator_loss_record,
+    ) = evaluate_model(
         generator,
         discriminator,
         gen_optimizer,
