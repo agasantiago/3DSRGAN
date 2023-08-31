@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 import torchio as tio
 
 
-def _read_video_file(video_file, rgb):
+def read_video_file(video_file, rgb):
     def cvtColor(frame):
         if rgb:
             return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -48,7 +48,7 @@ def _create_queue(subject_list, size):
 
 def _create_dataset(video_folder, transform, size, rgb, ext):
     video_files = [file for file in glob(os.path.join(video_folder, f"*{ext}"))]
-    videos = [_read_video_file(video_file, rgb) for video_file in video_files]
+    videos = [read_video_file(video_file, rgb) for video_file in video_files]
     subject_dataset = _create_subject_dataset(videos, transform)
     queue = _create_queue(subject_dataset, size)
     return queue
