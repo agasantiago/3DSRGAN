@@ -161,7 +161,7 @@ def _create_disc_convblocks(in_channels, features):
 
 
 class Discriminator(nn.Module):
-    def __init__(self, in_channels, features=[64, 64, 128, 128, 256, 256, 512, 512]):
+    def __init__(self, in_channels, features=[64, 128, 256, 512]):
         super().__init__()
         out_features = features[-1]
         self._conv_blocks = nn.Sequential(
