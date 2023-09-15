@@ -22,12 +22,13 @@ def evaluate_model(
     low_res=None,
     to_print=50,
     path_to_save=None,
+    num_workers=14
 ):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dataset = Dataset3D(
         video_folder, high_res, low_res, transform=transform, rgb=(in_channels == 3)
     )
-    loader = DataLoader(dataset, batch_size=batch_size)
+    loader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, pin_memory=True)
 
     generator = generator.to(device)
 
@@ -35,6 +36,7 @@ def evaluate_model(
         generator, gen_optimizer = train_generator(
             generator, gen_optimizer, loader, epochs_gen, device, to_print=to_print
         )
+        loader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, pin_memory=True)
 
     discriminator = discriminator.to(device)
 

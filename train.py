@@ -1,5 +1,4 @@
 from tqdm import tqdm
-from datetime import datetime
 
 from torch import nn
 
@@ -14,7 +13,6 @@ def train_generator(
     generator.to(device)
     loop = tqdm(range(epochs))
     loss_fn = nn.MSELoss()
-    start_time = datetime.now().hour
     for e in loop:
         for low_res, high_res in loader:
             high_res = high_res.to(device).float()
@@ -30,10 +28,8 @@ def train_generator(
         if (e + 1) % to_print == 0:
             print(f"[Loss - GENERATOR] Epoch: {e + 1}: {loss.item():.4e}")
 
-        now_time = datetime.now().hour
-        if abs(now_time - start_time) >= 2.0:
+        if (e + 1)%100 == 0:
             save_model(generator, optimizer, path_to_save)
-            start_time = now_time
 
     return generator, optimizer
 
@@ -104,7 +100,6 @@ def train_fn(
     discriminator_loss_fn = discriminator_loss_function()
 
     loop = tqdm(range(epochs))
-    start = datetime.now().hour
     for e in loop:
         (
             generator_pack,
@@ -124,13 +119,11 @@ def train_fn(
             print(f"[Loss - Generator] Epoch: {e + 1}: {generator_loss:.4e}")
             print(f"[Loss - Discriminator] Epoch: {e + 1}: {discriminator_loss:.4e}")
 
-        now = datetime.now().hour
-        if abs(now - start) >= 2.0:
+        if (e + 1)%100 == 0:
             generator, gen_optimizer = unpack_vars(generator_pack)
             discriminator, disc_optimizer = unpack_vars(discriminator_pack)
             save_model(generator, gen_optimizer, path_to_save)
             save_model(discriminator, disc_optimizer, path_to_save)
-            start = now
 
         generator_loss_record.append(generator_loss)
         discriminator_loss_record.append(discriminator_loss)
