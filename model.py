@@ -100,24 +100,34 @@ class Generator(nn.Module):
             stride=stride,
             padding=padding,
         )
-        self._upsample = nn.Sequential(
-            UpSample(
-                out_channels,
-                spatial_scale,
-                time_scale,
-                kernel_size=kernel_size,
-                stride=stride,
-                padding=padding,
-            ),
-            UpSample(
-                out_channels,
-                spatial_scale,
-                time_scale,
-                kernel_size=kernel_size,
-                stride=stride,
-                padding=padding,
-            ),
-        )
+
+        self._upsample = UpSample(
+                     out_channels,
+                     spatial_scale,
+                     time_scale,
+                     kernel_size=kernel_size,
+                     stride=stride,
+                     padding=padding,
+            )
+
+        # self._upsample = nn.Sequential(
+        #     UpSample(
+        #         out_channels,
+        #         spatial_scale,
+        #         time_scale,
+        #         kernel_size=kernel_size,
+        #         stride=stride,
+        #         padding=padding,
+        #     ),
+        #     UpSample(
+        #         out_channels,
+        #         spatial_scale,
+        #         time_scale,
+        #         kernel_size=kernel_size,
+        #         stride=stride,
+        #         padding=padding,
+        #     ),
+        # )
         self._cnn = nn.Conv3d(
             out_channels, in_channels, kernel_size=9, stride=1, padding=4
         )

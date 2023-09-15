@@ -42,7 +42,7 @@ def _create_subject_dataset(videos, transforms):
 
 def _create_queue(subject_list, size):
     sampler = tio.data.UniformSampler(size)
-    queue = tio.Queue(subject_list, 10, 4, sampler)
+    queue = tio.Queue(subject_list, 5, 4, sampler)
     return queue
 
 
@@ -67,7 +67,7 @@ class Dataset3D(Dataset):
         super().__init__()
         if not low_res:
             h, w, d = high_res
-            low_res = (h, w, d // 4)
+            low_res = (h, w, d // 2)
         self._low_res_transf = tio.transforms.Resize(target_shape=low_res)
         self._dataset = _create_dataset(video_folder, transform, high_res, rgb, ext)
 
